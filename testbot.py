@@ -34,7 +34,10 @@ async def on_message(message):
             await message.channel.send(message.author.top_role.permissions.manage_roles)
         else:
             await message.channel.send("Something went wrong, please try again")
-
+    if "$nick" in message.content.lower():
+            newnick = message.content[6::]
+            await message.author.edit(nick = newnick)
+            
 
 testbot.run(os.environ['token'])
 
