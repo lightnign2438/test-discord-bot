@@ -11,7 +11,10 @@ async def on_message(message):
         await message.channel.send("Hi!")
     if "$echo" in message.content.lower():
         await message.channel.send(message.content[6::])
+    #fix 
     if "$color" in message.content.lower():
+        '''work in progress, errors ensue'''
+        
         desiredcolor = message.content[7::]
         a = int(desiredcolor)
         print(a)
