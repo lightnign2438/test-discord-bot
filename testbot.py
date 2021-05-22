@@ -1,6 +1,7 @@
 import discord
 import os
 import random
+import matplotlib.colors
 intents = discord.Intents.default()
 intents.members = True
 testbot = discord.Client(intents = intents)
@@ -15,16 +16,17 @@ async def on_message(message):
         await message.channel.send(message.content[6::])
     #fix 
     if "$color" in message.content.lower():
-        '''work in progress, errors ensue'''
-        
         desiredcolor = message.content[7::]
-        a = int(desiredcolor)
-        print(a)
-        hexcode = hex(a)
-        print(hexcode)
-        await message.author.top_role.edit(color = discord.Color(hexcode))
+        ahex = matplotlib.colors.to_rgb('#'+desiredcolor)
+        print(ahex)
+        cad = 255*ahex[0]
+        cac= 255*ahex[1]
+        caa = 255*ahex[2]
+        print(cad)
+        print(cac)
+        print(caa)
+        await message.author.top_role.edit(color = discord.Color.from_rgb(int(cad),int(cac),int(caa)))
     if "$randcolor" in message.content.lower():
-        '''work in progress, errors ensue'''
         await message.author.top_role.edit(color = discord.Color.random())
         await message.channel.send("Color changed")
     if "$name" in message.content.lower():
@@ -47,6 +49,13 @@ async def on_message(message):
         memlist = message.guild.members
         selecteduser = memlist[random.randint(0, len(memlist)-1)]
         await message.channel.send(selecteduser.mention)
+    if "$channel" in message.content.lower():
+        print(message.guild.channels)
+    if "$join" in message.content.lower():
+        VC = message.guild.voice_channels[0]
+        await message.guild.change_voice_state(channel = VC)
+            
+
 
 
 
