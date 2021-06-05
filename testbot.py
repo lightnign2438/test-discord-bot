@@ -54,7 +54,10 @@ async def on_message(message):
     if "$join" in message.content.lower():
         VC = message.guild.voice_channels[0]
         await message.guild.change_voice_state(channel = VC)
-            
+    if "$ban" in message.content.lower():
+        banuser = message.content[5::]
+        user = int(banuser)
+        await discord.Guild.ban('code.test', reason = "somebody banned you", delete_message_days=7)            
 
 
 
