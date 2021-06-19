@@ -7,6 +7,9 @@ intents.members = True
 testbot = discord.Client(intents = intents)
 @testbot.event
 async def on_ready():
+    game = discord.Game("Bot is ready")
+    await testbot.change_presence(status=discord.Status.online, activity=game)
+    
     print("Run successful")
 @testbot.event
 async def on_message(message):
@@ -101,23 +104,41 @@ async def on_message(message):
         else:
             dmchan = message.author.dm_channel
         await dmchan.send(param)
-    if message.content.lower() == "$dminv ":
-        user = message.content.author()
-        invitee = await message.channel.create_invite(max_age = 120,max_uses = 1, unique =True)
+    if message.content.lower() == "$dminv":
+        invite = await message.channel.create_invite(max_age = 120, max_uses = 1, unique = True)
         if message.author.dm_channel == None:
             dmchan = await message.author.create_dm()
         else:
             dmchan = message.author.dm_channel
-        await dmchan.send(invitee)
-
+        await dmchan.send(invite)
+    if "$dmp" in message.content.lower():
+        invite = await message.channel.create_invite(max_age = 120, max_uses = 1, unique = True)
+        userid = message.content[5::]
+        user = testbot.get_user(int(userid))
+        if user == None: 
+            await message.send("No users with given ID/name")
+        
+        if user.dm_channel == None:
+            dmchan = await user.create_dm()
+        else:
+            dmchan = user.dm_channel
+        await dmchan.send(invite)
+    if message.content.lower() == "$react":
+        await message.add_reaction(message.guild.emojis[0])
+    
 testbot.run(os.environ['token'])
 
 
 '''
 errors:
-invalid literal for int() with base 16
+invalid literal for int() with base 16 FIXED
 sol:
-input isn't str, it's an object.
-bug: echo doesn't work
+input isn't str, it's an object. FIXED
+bug: echo doesn't work FIXED
+TODO:
+get user id from name&tag
+create an annoucements function
+create the AOPS function for emojis i.e. :lenny_face: would get a lenny face
+plays music from a link
 '''
 
