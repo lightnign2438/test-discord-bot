@@ -125,7 +125,29 @@ async def on_message(message):
         await dmchan.send(invite)
     if message.content.lower() == "$react":
         await message.add_reaction(message.guild.emojis[0])
-    
+    '''if "$announce" in message.content.lower():
+        mes = message.content[10::]
+        for i in message.guild.channels: FIX '''
+    if "$role" in message.content.lower():
+        para = message.content[6::]
+        rolename, perm = para.split()
+        if perm.lower() in ("admin","administrator"):
+            pe = discord.Permissions(administrator = True)
+            await message.guild.create_role(name = rolename, permissions = pe)
+        elif perm.isspace() == False:
+            pem = perm.lower()
+            pem.replace(" ", "_")
+            pe = discord.Permissions(pem = True)
+            await message.guild.create_role(name = rolename, permissions = pe)
+        elif perm.ispace() == True:
+            count = 0
+            for i in perm:
+                count += count
+            if i.isspace() > 53:
+               message.channel.send("You have entered too many permissions or have added double spaces, please try again")
+            #else:
+            #    if i.isspace() < 53:
+                    
 testbot.run(os.environ['token'])
 
 
@@ -133,12 +155,15 @@ testbot.run(os.environ['token'])
 errors:
 invalid literal for int() with base 16 FIXED
 sol:
-input isn't str, it's an object. FIXED
+input isn't str, it's an object.
 bug: echo doesn't work FIXED
 TODO:
 get user id from name&tag
 create an annoucements function
 create the AOPS function for emojis i.e. :lenny_face: would get a lenny face
 plays music from a link
+Help feature IMPORTANT
+Given a username get an id IMPORTANT
+Complete role adder
 '''
 
