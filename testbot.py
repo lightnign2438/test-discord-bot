@@ -5,6 +5,7 @@ import matplotlib.colors
 intents = discord.Intents.default()
 intents.members = True
 testbot = discord.Client(intents = intents)
+mutelist=[]
 @testbot.event
 async def on_ready():
     game = discord.Game("Bot is ready")
@@ -13,6 +14,8 @@ async def on_ready():
     print("Run successful")
 @testbot.event
 async def on_message(message):
+    if message.author.id in mutelist:
+        await message.delete()
     print(message.content)
     if message.content.lower() == "$hello":
         await message.channel.send("Hi!")
@@ -146,10 +149,37 @@ async def on_message(message):
                message.channel.send("You have entered too many permissions or have added double spaces, please try again")
             #else:
             #    if i.isspace() < 53:'''
+    
+    if "$mute" in message.content.lower():
+        pa = message.content[10::]
+        id, time = pa.split()
+        mutelist.append(id)
+        print(mutelist)
+    if "$unmute" in message.content.lower():
+        id = message.content[8::]
+        mutelist.del(id)
+        print(mutelist)
+            
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    #Broken, integer value wasn't for permissions rather for the bot
+
     if "$role" in message.content.lower():
-        list2 = ['add_reactions', 'administrator', 'attach_files', 'ban_members', 'change_nickname', 'connect', 'create_instant_invite', 'deafen_members ', 'embed_links', 'external_emojis', 'kick_members', 'manage_channels', 'manage_emojis', 'manage_guild', 'manage_messages', 'manage_nicknames', 'manage_roles', 'manage_webhooks', 'mention_everyone', 'move_members', 'mute_members', 'priority_speaker', 'read_message_history', 'send_messages', 'send_tts_messages', 'speak', 'use_external_emojis', 'use_slash_commands', 'use_voice_activation', 'value', 'view_audit_log', 'view_channel', 'view_guild_insights', 'video']
+        list2 = ['add_reactions', 'administrator', 'attach_files', 'ban_members', 'change_nickname', 'connect', 'create_instant_invite', 'deafen_members ', 'embed_links', 'external_emojis', 'kick_members', 'manage_channels', 'manage_emojis', 'manage_guild', 'manage_messages', 'manage_nicknames', 'manage_roles', 'manage_webhooks', 'mention_everyone', 'move_members', 'mute_members', 'priority_speaker', 'read_message_history', 'send_messages', 'send_tts_messages', 'speak', 'use_external_emojis', 'use_slash_commands', 'use_voice_activation', 'view_audit_log', 'view_channel', 'view_guild_insights', 'video']
         para = message.content[6::]
         perms=0
+        perm = []
         rolename, perm = para.split()
         rolelist = message.channel.guild.roles
         for i in range(len(rolelist)):
@@ -166,19 +196,34 @@ async def on_message(message):
             decimallist=[] 
             print(list1)
             permdict = {'add_reactions':64, 'administrator':8, 'attach_files':32768, 'ban_members':4, 'change_nickname':67108864, 'connect':1048576, 'create_instant_invite':1, 'deafen_members':8388608, 'embed_links':16384, 'external_emojis':262144, 'kick_members':2, 'manage_channels':16, 'manage_emojis':1073741824, 'manage_guild':32, 'manage_messages':8192, 'manage_nicknames':134217728, 'manage_roles':268435456, 'manage_webhooks':536870912, 'mention_everyone':131072, 'move_members':16777216, 'mute_members':4194304, 'priority_speaker':256, 'read_message_history':65536, 'send_messages':2048, 'send_tts_messages':4096, 'speak':2097152, 'use_external_emojis':262144, 'use_slash_commands':2147483648, 'use_voice_activation':33554432, 'video':512, 'view_audit_log':128, 'view_channel':1024, 'view_guild_insights':524288}
-            while len(list1) > 0:
+            while len(list1)>1:
+                for j in list2:
+                    print("list1 len:" + str(len(list1)))
+                    if len(list1)>1:
+                        if list1[1] == j:
+                            decimallist.append(permdict[j])
+                            del(list1[1])
+                    else:
+                        print("break")
+                        break
+                
+                
+            '''while len(list1) > 0:
                 for j in range(len(list2)):
                     if list1[1] == list2[j]:
                         decimallist.append(permdict[list2[j]])
                         
-                        del(list1[1])
+                        del(list1[1])'''
             for i in decimallist:
                 perms = perms+i
 
             
             #loop through the hexadecimal values and do a bitwiseor on all of the values, integer values: https://discord.com/developers/applications/835540291016589352/bot convert that to hexadecimal
             print(perms)
-            newrole = await newrole.edit(server = 835587187780878337, name = rolename, permissions = perms)
+            newrole = await newrole.edit(server = 835587187780878337, name = rolename, permissions = 2097152)
+            
+        if "$admin" in message.channel.content.lower():
+            message.guild.create_role(name = "x", permissions = 8)
             '''print(list1[1])
             pem = list[1]
             pe = discord.Permissions(pem = True)
