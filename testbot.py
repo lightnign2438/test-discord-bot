@@ -2,10 +2,14 @@ import discord
 import os
 import random
 import matplotlib.colors
+import asyncio
+import nacl
+import ffmpeg
 intents = discord.Intents.default()
 intents.members = True
 testbot = discord.Client(intents = intents)
 mutelist=[]
+banlist=[]
 @testbot.event
 async def on_ready():
     game = discord.Game("Bot is ready")
@@ -14,15 +18,26 @@ async def on_ready():
     print("Run successful")
 @testbot.event
 async def on_message(message):
-    if message.author.id in mutelist:
-        await message.delete()
+    for i in range(len(mutelist)):
+        print(mutelist[i])
+        if mutelist[i]==message.author.id:
+            print(message.author.id)
+            await message.delete()
     print(message.content)
+    
+    
+    
     if message.content.lower() == "$hello":
         await message.channel.send("Hi!")
+    
+    #echo's what you said
+
     if "$echo " in message.content.lower():
         print("test") 
         await message.channel.send(message.content[6::])
-    #fix 
+
+    #change color based on hexcode    
+
     if  "$color" in message.content.lower():
         desiredcolor = message.content[7::]
         ahex = matplotlib.colors.to_rgb('#'+desiredcolor)
@@ -34,46 +49,72 @@ async def on_message(message):
         print(cac)
         print(caa)
         await message.author.top_role.edit(color = discord.Color.from_rgb(int(cad),int(cac),int(caa)))
+
+    #gives you a random color (beware, it changes everyone with the same top rank)
+
     if  "$randcolor" in message.content.lower():
         await message.author.top_role.edit(color = discord.Color.random())
         await message.channel.send("Color changed")
+
+    #changes your name
+
     if  "$name" in message.content.lower():
         newname = message.content[6::]
+        user = await message.guild.fetch_member(message.author.id)
+        await message.channel.send(user + " changed their name too " + newname)
         await message.author.top_role.edit(name = newname)
-    if  "$perm" in message.content.lower():
-        perm = message.content[6::]        
-        if perm == "nickname":    
-            await message.channel.send(message.author.top_role.permissions.manage_nicknames)
-        elif perm in ("roles", "role"):
-            await message.channel.send(message.author.top_role.permissions.manage_roles)
-        else:
-            await message.channel.send("Something went wrong, please try again")
+
+    #changes your nickname
+
     if "$nick"in message.content.lower():
             newnick = message.content[6::]
             await message.author.edit(nick = newnick)
+
+    #test command for memberlist
+
     if "$memberlist" in message.content.lower():
         print(message.guild.members)  
+    
+    #says a random user
+
     if "$pingroulette" in message.content.lower():
         memlist = message.guild.members
         selecteduser = memlist[random.randint(0, len(memlist)-1)]
         await message.channel.send(selecteduser.mention)
+
+    #get's all channel, test command
+
     if "$channel" in message.content.lower():
         for i in message.guild.channels:
             print(i)
+
+    #join's first vc   
         
     if "$join" in message.content.lower():
         VC = message.guild.voice_channels[0]
         await message.guild.change_voice_state(channel = VC)
+
+    #ban command, doesn't work
+
     if "$ban" in message.content.lower():
         banuser = message.content[5::]
         user = str(banuser)
         await discord.Guild.ban('code.test', reason = "somebody banned you", delete_message_days=7)            
+
+    #clones current channel
+
     if  "$clone" in message.content.lower():
         currchan = message.channel
         name = message.content[8::]
         await currchan.clone(name=name)
-    if  message.content.lower() == "$delete channel":
+
+    #delete's channel you're in
+
+    if  message.content.lower() == "$deletechannel":
         await message.channel.delete()
+
+    #delete's channel by name, deosn't work if 2 channels with same name
+
     if  "$deltchan" in message.content.lower():
         channame=message.content[10::]
         for i in message.guild.text_channels:
@@ -83,37 +124,24 @@ async def on_message(message):
         else:
             await message.channel.send("Channel not found, please try again")
         await deltachan.delete()
+
+    #create's channel
+
     if "$createtchan" in message.content.lower():
         channame = message.content[12::]
         await message.guild.create_text_channel(channame)
-    if "$mymes" in message.content.lower():
-        counter=0
-        async for i in message.channel.history():
-            counter+=1
-        await message.channel.send("There are " + str(counter) + " messages in this channel by " + str(message.author))
+
+    #get's number of messages sent by author
+
     if "$mymes" in message.content.lower():
         counter=0
         async for i in message.channel.history():
             if message.author==i.author:
                 counter+=1
         await message.channel.send("There are " + str(counter) + " messages in this channel by " + str(message.author))
-    if message.content.lower() == "$invite":
-        invitee = await message.channel.create_invite(max_age = 120,max_uses = 1, unique =True)
-        await message.channel.send(str(invitee))
-    if message.content.lower()[0:7] == "$chodm ":
-        param = message.content[7::]
-        if message.author.dm_channel == None:
-            dmchan = await message.author.create_dm()
-        else:
-            dmchan = message.author.dm_channel
-        await dmchan.send(param)
-    if message.content.lower() == "$dminv":
-        invite = await message.channel.create_invite(max_age = 120, max_uses = 1, unique = True)
-        if message.author.dm_channel == None:
-            dmchan = await message.author.create_dm()
-        else:
-            dmchan = message.author.dm_channel
-        await dmchan.send(invite)
+
+    #dm's someone an invite to the channel
+
     if "$dmp" in message.content.lower():
         invite = await message.channel.create_invite(max_age = 120, max_uses = 1, unique = True)
         userid = message.content[5::]
@@ -128,37 +156,85 @@ async def on_message(message):
         await dmchan.send(invite)
     if message.content.lower() == "$react":
         await message.add_reaction(message.guild.emojis[0])
-    '''if "$announce" in message.content.lower():
-        mes = message.content[10::]
-        for i in message.guild.channels: FIX '''
-    '''if "$role" in message.content.lower():
-        para = message.content[6::]
-        rolename, perm = para.split()
-        if perm.lower() in ("admin","administrator"):
-            pe = discord.Permissions(administrator = True)
-            await message.guild.create_role(name = rolename, permissions = pe)
-        elif perm.isspace() == False:
-            pem = perm.lower()
-            pe = discord.Permissions(pem = True)
-            await message.guild.create_role(name = rolename, permissions = pe)
-        elif perm.ispace() == True:
-            count = 0
-            for i in perm:
-                count += count
-            if i.isspace() > 53:
-               message.channel.send("You have entered too many permissions or have added double spaces, please try again")
-            #else:
-            #    if i.isspace() < 53:'''
     
+    #mute's a person by id
+
     if "$mute" in message.content.lower():
-        pa = message.content[10::]
-        id, time = pa.split()
-        mutelist.append(id)
+        try:
+            pa = int(message.content[6::])
+        except Exception:              
+            await message.channel.send("Invalid input")
+            return
+        authormessage = message.guild.get_member(message.author.id)
+        try:
+            muteid = message.guild.get_member(pa)  
+        except Exception:              
+            await message.channel.send("User does not exist")
+            return       
+        authorrole = []  
+        authorrole = authormessage.roles
+        print(authorrole)
+        messagerole = []
+        messagerole = muteid.roles
+        print (messagerole)
+        for i in mutelist:
+            for j in mutelist:
+                if j == i:
+                    mutelist.remove(j)
+
+            if authorrole[len(authorrole)-1] >  messagerole[len(messagerole)-1]:
+                mutelist.append(pa)
+                user = await message.guild.fetch_member(pa)
+                user2 = await message.guild.fetch_member(message.author.id)
+                await message.channel.send(user.nick + " was just muted by " +  user2.nick)
+        else:
+            await message.channel.send("you rank is too low")
         print(mutelist)
+
+
+
+        
+
+    #unmute's a person by id
+
+
+
+
+
     if "$unmute" in message.content.lower():
-        id = message.content[8::]
-        mutelist.del(id)
         print(mutelist)
+        try:
+            id = int(message.content[8::])
+        except Exception: 
+             
+            await message.channel.send("Invalid input")
+            return    
+        mutelist.remove(id)
+        print(mutelist)
+        try:
+            user = await message.guild.fetch_member(id)
+        except Exception:         
+            await message.channel.send("User does not exist")
+            return    
+        user2 = await message.guild.fetch_member(message.author.id)
+        await message.channel.send(user.nick + " has been unmuted by " + user2.nick)
+
+    #clear's the list of muted people, (unmutes everyone)
+
+    if "$clear mutelist" in message.content.lower():
+        mutelist.clear()
+        user = await message.guild.fetch_member(message.author.id)
+        await message.channel.send("mutelist has been cleared by " + user.nick)
+
+    #testing command which sends the list of people who are muted
+
+    if "$mutelist" in message.content.lower():
+        message.channel.send(mutelist)
+
+    if "$help" in message.content.lower():
+        await message.channel.send("hello, prints hi \n echo prints whatever is said after echo \n color, takes in a hexcode and is formatted like this color hexcode, changes the highest rank of the message author and changes it to the hexcode color WARNING: changes everyone elses color with that highest rank \n randcolor changes the highest rank of the message author and gives it a random color, WARNING: changes everyone elses color with that highest rank \n name, changes name format name newname \n nick changes your nickname format: nick newname \n pingroulette, says a random user \n join, bot joins first vc \n clone, clones current channel that you’re in \n deletechannel, deletes current channel you’re in \n deltchan, deletes channel by name, WARNING if 2 channels have the same name, it will delete one of them \n createchan, creates channel format createchan channame \n mymes, says how many messages message author has sent \n dmp creates a dm with someone and gives them an invite, format dmp userid \n mute, mutes a person by id, format mute userid \n unmute, unmutes a person by id format unmute id \n clear mutelist, unmutes everyone \n mutelist test command which sends mutelist or the list of everyone muted \n inorder to use commands just do $ infront of it")
+
+        
             
     
     
@@ -222,15 +298,42 @@ async def on_message(message):
             print(perms)
             newrole = await newrole.edit(server = 835587187780878337, name = rolename, permissions = 2097152)
             
-        if "$admin" in message.channel.content.lower():
+        if "$admin" in message.content.lower():
             message.guild.create_role(name = "x", permissions = 8)
             '''print(list1[1])
             pem = list[1]
             pe = discord.Permissions(pem = True)
             await message.guild.create_role(name = list1[0], permissions = pe)
             '''
+    if message.content.lower() ==  "$song":
+        print("awoijsda")
+        print("hiasd")
+        VC = message.author.voice.channel
+        print(VC)
+        connection = await VC.connect(timeout=10) 
+        print(connection)
+        connection.play(discord.FFmpegPCMAudio(executable="C:/Users/mhutc/OneDrive/Documents/ffmpeg/bin/ffmpeg.exe", source="song.mp3"))
+        print("asdhiw")
+        while connection.is_playing():
+            await asyncio.sleep(0.1)
+        await connection.disconect            
+        await message.channel.send("disconnected")
+        return       
 
-                    
+
+
+async def speak(message):
+    print("play worked")
+    try:
+        VC = message.author.voice.channel
+        connection = await VC.connect(timeout=10) 
+        connection.play(discord.FFmpegAudio(executable="C:/Users/mhutc/OneDrive/Documents/test discord bot/botenvtest/Lib/site-packages/ffmpeg/_ffmpeg.py", source = "src/song.mp3"))
+        while connection.is_playing():
+            asyncio.sleep(0.1)
+        connection.disconect
+    except Exception:              
+        await message.channel.send("disconnected")
+        return                    
 testbot.run(os.environ['token'])
 
 
@@ -246,10 +349,10 @@ create an annoucements function
 create the AOPS function for emojis i.e. :lenny_face: would get a lenny face
 plays music from a link
 Help feature IMPORTANT
-Given a username get an id IMPORTANT
-Complete role adder
-create a while loop that ends when the list length is 1, then check if the first permission is somewhere in the list2, but first turn all spaces into underscores and lowercase everything, once the permission is found in list2, add that permission into the role.
-permissions have an integer object get the integer first from the list2 list then set that to a variable. Next add permissions to that variable then do newrole.edit, and set the permissions to the variable with the integer value of permissions
-create a dictionary of the hexadecimal code for each permissions, perform a bitwiseor between the hexadecimal for more than 1 permissions the decimal value of all that is the permssions integer value
+
+
+Final Project!: 
+let a user store video links of songs on a text based json file, then when they type !songroulette, it picks a random song, joins the current users vc, and plays the song
+
 '''
 
