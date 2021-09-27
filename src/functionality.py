@@ -137,7 +137,10 @@ async def on_message(message):
             
     #play an song by joining current vc (will only play 1 song for now)
     if message.content.lower() ==  "$song":
-        await speak.song(message)     
+        await speak.song(message) 
+
+    if message.content.lower() == "$ping":
+        await message.channel.send("@" + message.author)    
                   
 
 
