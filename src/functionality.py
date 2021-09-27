@@ -138,7 +138,14 @@ async def on_message(message):
     #play an song by joining current vc (will only play 1 song for now)
     if message.content.lower() ==  "$song":
         await speak.song(message) 
-   
+    if "$announcements" in message.content.lower():
+        if message.guild_permissions.author.administrator == True:
+            sendmessage = message.content[15::]
+            await message.channel.send("@everyone " + sendmessage)
+        else:
+            message.channel.send("Admin is required to run thisc ommands")
+
+        
                   
 
 
