@@ -88,11 +88,6 @@ async def on_message(message):
         for i in message.guild.channels:
             print(i)
 
-    #join's first vc   
-        
-    if "$join" in message.content.lower():
-        VC = message.guild.voice_channels[0]
-        await message.guild.change_voice_state(channel = VC)
 
     #ban command, doesn't work
 
@@ -299,12 +294,15 @@ async def on_message(message):
             newrole = await newrole.edit(server = 835587187780878337, name = rolename, permissions = 2097152)
             
         if "$admin" in message.content.lower():
-            message.guild.create_role(name = "x", permissions = 8)
-            '''print(list1[1])
+
+            rolename = message.content[6::]            
+            message.guild.create_role(name = rolename)
+            print(list1[1])
             pem = list[1]
             pe = discord.Permissions(pem = True)
-            await message.guild.create_role(name = list1[0], permissions = pe)
-            '''
+            await message.guild.create_role(name = list1[0], permissions = adminorstrator)
+            
+    #play an song by joining current vc (will only play 1 song for now)
     if message.content.lower() ==  "$song":
         print("awoijsda")
         print("hiasd")

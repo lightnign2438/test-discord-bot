@@ -1,16 +1,28 @@
 import discord
+import os
+import random
+import matplotlib.colors
+import asyncio
+import nacl
+import ffmpeg
 
+intents = discord.Intents.default()
+intents.members = True
+testbot = discord.Client(intents = intents)
 
-async def speak(message):
-    try:
+async def song(message):
+
+    #play an song by joining current vc (will only play 1 song for now)
+        print("awoijsda")
+        print("hiasd")
         VC = message.author.voice.channel
+        print(VC)
         connection = await VC.connect(timeout=10) 
-        connection.play(discord.FFmpegAudio(executable="C:\Users\mhutc\OneDrive\Documents\ffmpeg.exe",source = ""))
+        print(connection)
+        connection.play(discord.FFmpegPCMAudio(executable="C:/Users/mhutc/OneDrive/Documents/ffmpeg/bin/ffmpeg.exe", source="song.mp3"))
+        print("asdhiw")
         while connection.is_playing():
-            asyncio.sleep(0.1)
-        connection.disconect
-    except Exception:              
+            await asyncio.sleep(0.1)
+        await connection.disconect            
         await message.channel.send("disconnected")
-        return
-
-#download an mpc and put it in speak file, then put it in sorce
+        return       
