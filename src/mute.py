@@ -48,7 +48,7 @@ async def mute(message):
 async def checkmutelist(message):
 
     #testing command which sends the list of people who are muted
-    chan = message.guild.get_channel(modchannelid)
+    chan = message.guild.fetch_channels(892189261816795216)
     message.chan.send(mutelist)
 
 
@@ -79,7 +79,7 @@ async def clearmutelist(message):
 
     #clear's the list of muted people, (unmutes everyone)
 
-        chan = message.guild.get_channel(modchannelid)
+        chan = message.channel.get_channel(modchannelid)
         mutelist.clear()
         user = await message.guild.fetch_member(message.author.id)
         await message.chan.send("mutelist has been cleared by " + user.nick)
