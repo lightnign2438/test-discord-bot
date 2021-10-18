@@ -13,7 +13,7 @@ modchannelid = constant.modchannelid
 async def mute(message):
 
     #mute's a person by id
-        chan = message.guild.get_channel(modchannelid)
+        chann = testbot.get_channel(modchannelid)
         try:
             pa = int(message.content[6::])
         except Exception:              
@@ -40,7 +40,7 @@ async def mute(message):
                 mutelist.append(pa)
                 user = await message.guild.fetch_member(pa)
                 user2 = await message.guild.fetch_member(message.author.id)
-                await message.chan.send(user.nick + " was just muted by " +  user2.nick)
+                await message.chann.send(user.nick + " was just muted by " +  user2.nick)
         else:
             await message.channel.send("you rank is too low")
         print(mutelist)
@@ -48,8 +48,8 @@ async def mute(message):
 async def checkmutelist(message):
 
     #testing command which sends the list of people who are muted
-    chan = message.guild.fetch_channels(892189261816795216)
-    message.chan.send(mutelist)
+    chann = testbot.get_channel(modchannelid)
+    message.chann.send(mutelist)
 
 
 async def unmute(message):
@@ -57,7 +57,7 @@ async def unmute(message):
 
 
 
-        chan = message.guild.get_channel(modchannelid)
+        chann = testbot.get_channel(modchannelid)
         print(mutelist)
         try:
             id = int(message.content[8::])
@@ -73,14 +73,14 @@ async def unmute(message):
             await message.channel.send("User does not exist")
             return    
         user2 = await message.guild.fetch_member(message.author.id)
-        await message.chan.send(user.nick + " has been unmuted by " + user2.nick)
+        await message.chann.send(user.nick + " has been unmuted by " + user2.nick)
 
 async def clearmutelist(message):
 
     #clear's the list of muted people, (unmutes everyone)
 
-        chan = message.channel.get_channel(modchannelid)
+        chann = testbot.get_channel(modchannelid)
         mutelist.clear()
         user = await message.guild.fetch_member(message.author.id)
-        await message.chan.send("mutelist has been cleared by " + user.nick)
+        await message.chann.send("mutelist has been cleared by " + user.nick)
 

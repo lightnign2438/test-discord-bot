@@ -12,6 +12,6 @@ async def hello(message):
 async def echo(message):
 
     #echo's what you said
-
+    
     print("test") 
     await message.channel.send(message.content[6::])

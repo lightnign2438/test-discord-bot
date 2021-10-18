@@ -25,6 +25,11 @@ async def on_message(message):
     print(message.content)
     if message.content.lower() == "$hello":
             await basic.hello(message)
+    #
+    if message.content.lower() == "$testing":
+        chann = client.get_channel(887112421351755896)
+        await chann.send('hello')
+
     
     #echo's what you said
 
@@ -130,6 +135,8 @@ async def on_message(message):
 
     if "$help" in message.content.lower():
         await help.help(message)
+    
+    
 
         
             
@@ -141,6 +148,8 @@ async def on_message(message):
         await speak.song(message) 
     if "$announcements" in message.content.lower():
         await announcements.announcements(message)
+
+    
 
         
                   

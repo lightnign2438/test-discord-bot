@@ -10,4 +10,4 @@ async def announcements(message):
         sendmessage = message.content[15::]
         await message.channel.send("@everyone " + sendmessage)
     else:
-        message.channel.send("Admin is required to run thisc ommands")
+        message.channel.send("Admin is required to run this commands")
