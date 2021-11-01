@@ -37,6 +37,7 @@ async def color(message):
         print(caa)
         await message.author.top_role.edit(color = discord.Color.from_rgb(int(cad),int(cac),int(caa)))
         
+        
 async def randcolor(message):
 
     #gives you a random color (beware, it changes everyone with the same top rank)
