@@ -1,4 +1,5 @@
 import discord
+from embed import embed_maker
 
 intents = discord.Intents.default()
 intents.members = True
@@ -21,4 +22,5 @@ async def dminv(message):
             dmchan = user.dm_channel
         await dmchan.send(invite)
 
+        await message.channel.send(embed = embed_maker(title = "Invite", description = message.author + " invited " + user + ".", color = 0x7a805d, author = message.author, icon = False, iconi = "a", url = False, urli = 1))
         

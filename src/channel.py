@@ -1,8 +1,6 @@
 import discord
+from embed import embed_maker
 
-intents = discord.Intents.default()
-intents.members = True
-testbot = discord.Client(intents = intents)
 
 async def clonechan(message):
 
@@ -11,6 +9,8 @@ async def clonechan(message):
         currchan = message.channel
         name = message.content[8::]
         await currchan.clone(name=name)
+        await message.channel.send(embed = embed_maker(title = "Clonedchannel", description = message.author + " cloned " + currchan, color = 0x7a805d, author = message.author, icon = False, iconi = "a", url = False, urli = 1))
+        
 
 async def createchan(message):
 
@@ -18,6 +18,7 @@ async def createchan(message):
 
         channame = message.content[12::]
         await message.guild.create_text_channel(channame)
+        await message.channel.send(embed = embed_maker(title = "Clonedchannel", description = message.author + " created a channel called " + channame, color = 0x7a805d, author = message.author, icon = False, iconi = "a", url = False, urli = 1))
 
 async def deltchan(message):
 
